@@ -2,3 +2,5 @@
 .env.docker
 __pycache__/
 .git
+.idea
+.vs
