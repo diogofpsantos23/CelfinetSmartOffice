@@ -5,25 +5,14 @@ services:
     volumes:
       - mongo_data:/data/db
 
-  app:
+  web:
     build: .
-    container_name: api
+    container_name: smartoffice
     ports:
-      - "8080:8080"
-    env_file:
-      - .env.docker
-    volumes:
-      - .env.docker:/app/.env.docker:ro
-    depends_on:
-      - mongo
-
-  streamlit:
-    build: .
-    ports:
-      - "8501:8501"
-    env_file:
-      - .env.docker
+      - "8080:8080"          # FastAPI
+      - "8501:8501"          # Streamlit
+    env_file: [.env.docker]
+    depends_on: [mongo]
 
 volumes:
   mongo_data:
-    
