@@ -1,0 +1,29 @@
+services:
+  mongo:
+    image: mongo:6
+    container_name: db
+    volumes:
+      - mongo_data:/data/db
+
+  app:
+    build: .
+    container_name: api
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.docker
+    volumes:
+      - .env.docker:/app/.env.docker:ro
+    depends_on:
+      - mongo
+
+  streamlit:
+    build: .
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env.docker
+
+volumes:
+  mongo_data:
+    
