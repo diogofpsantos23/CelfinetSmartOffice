@@ -2,6 +2,7 @@ import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import profileIcon from "../assets/profile.svg";
+import logo from "../assets/logo.png";
 
 export default function Header() {
     const { user, logout } = useContext(AuthContext);
@@ -24,8 +25,8 @@ export default function Header() {
 
     return (
         <header className="app-header">
-            <h1 className="logo">Smart Office</h1>
-            <div className="spacer" />
+            <img src={logo} alt="Celfinet Smart Office" className="logo"/>
+            <div className="spacer"/>
             {user && (
                 <div className="profile-wrapper" ref={menuRef}>
                     <button
