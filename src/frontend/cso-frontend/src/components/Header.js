@@ -1,6 +1,7 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import Clock from "./Clock";
 import profileIcon from "../assets/profile.svg";
 import logo from "../assets/logo.png";
 
@@ -28,6 +29,8 @@ export default function Header() {
             <img src={logo} alt="Celfinet Smart Office" className="logo"/>
             <div className="spacer"/>
             {user && (
+                <>
+                <Clock />
                 <div className="profile-wrapper" ref={menuRef}>
                     <button
                         className="avatar-btn"
@@ -52,6 +55,7 @@ export default function Header() {
                         </div>
                     )}
                 </div>
+                </>
             )}
         </header>
     );

@@ -1,3 +1,18 @@
+:root {
+    --left-bg: #07264b;
+    --right-bg:  #F4F7FA;
+    --card-bg:   #F9FAFC;
+    --accent:    #1E2F48;
+    --accent-dark:#162336;
+    --text-dark: #07264b;
+    --text-soft: #5F6F82;
+    --border:    #A7B1BD;
+    --error:     #e53935;
+    --radius:    12px;
+    --shadow:    0 8px 24px rgba(0,0,0,.12);
+    --transition:.18s ease;
+}
+
 html, body {
     font-family: 'Roboto', Arial, sans-serif;
     font-weight: 400;
@@ -108,5 +123,19 @@ h1, h2, h3, h4, h5, h6 {
 .footer h5 {
     color: white;
 }
+
+.clock {
+    margin-right: 18px;
+    font-family: "Roboto Mono", monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--card-bg);
+    padding: 6px 10px;
+    border-radius: 6px;
+    box-shadow: 0 0 0 1px var(--border, rgba(0,0,0,.05));
+    transition: opacity .2s ease;
+}
+.app-header:hover .clock { opacity: .9; }
 
 
