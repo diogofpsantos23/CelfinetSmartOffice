@@ -1,9 +1,0 @@
-*.log
-*.env
-.git
-.gitignore
-.dockerignore
-.env.docker
-.env
-__pycache__/ 
-
