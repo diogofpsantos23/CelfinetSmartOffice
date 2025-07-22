@@ -6,7 +6,8 @@ from services.db import Database
 
 
 db_instance=Database()
-db_instance.populate()
+if not db_instance.is_initialized():
+    db_instance.populate()
 
 
 

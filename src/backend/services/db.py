@@ -24,12 +24,15 @@ class Database:
     #INITIALIZATION METHODS
 
     def populate(self):
-        self.users_collection.delete_many({}) #clear before inserting
+        self.drop()
         with open(self.db_path, "r") as f:
             data = json.load(f)
             for doc in data:
                 doc.pop("_id", None)  # remove _id to let MongoDB auto-generate it
                 self.users_collection.insert_one(doc)
+
+    def is_initialized(self):
+        return self.users_collection.estimated_document_count() > 0
 
     def drop(self):
         self.users_collection.delete_many({})
