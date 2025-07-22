@@ -1,63 +1,66 @@
-// src/pages/Login.js
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import logo from "../assets/logo2.png";
+import "../styles/Auth.css";
 
 export default function Login() {
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const [form, setForm] = useState({ username: "", password: "" });
-    const [error, setError] = useState("");
-    const [submitting, setSubmitting] = useState(false);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error,    setError]    = useState("");
+    const [loading,  setLoading]  = useState(false);
 
-    const onChange = (e) => {
-        const { name, value } = e.target;
-        setForm((f) => ({ ...f, [name]: value }));
-        if (error) setError("");
-    };
-
-    const onSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitting(true);
+        setLoading(true);
         try {
-            await login(form.username, form.password);
+            await login(username, password);
             navigate("/dashboard");
-        } catch (err) {
+        } catch (_) {
             setError("Credenciais inválidas");
         } finally {
-            setSubmitting(false);
+            setLoading(false);
         }
     };
 
     return (
-        <div className="login-container">
-            <form onSubmit={onSubmit}>
-                <h2>Entrar</h2>
+        <div className="auth-container">
+            <div className="auth-left">
+                <div className="auth-logo">
+                    <img src={logo} alt="Smart Office" className="logo-icon" />
+                </div>
+            </div>
 
-                <input
-                    name="username"
-                    placeholder="Username"
-                    value={form.username}
-                    onChange={onChange}
-                    autoComplete="username"
-                />
-
-                <input
-                    name="password"
-                    type="password"
-                    placeholder="Password"
-                    value={form.password}
-                    onChange={onChange}
-                    autoComplete="current-password"
-                />
-
-                {error && <p style={{ color: "red" }}>{error}</p>}
-
-                <button type="submit" disabled={submitting}>
-                    {submitting ? "A entrar..." : "Login"}
-                </button>
-            </form>
+            <div className="auth-right">
+                <div className="auth-form-box">
+                    <h2>Login</h2>
+                    <form onSubmit={handleSubmit}>
+                        <input
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}
+                            autoComplete="username"
+                            required
+                        />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            autoComplete="current-password"
+                            required
+                        />
+                        {error && <p className="auth-error">{error}</p>}
+                        <button className="auth-btn" type="submit" disabled={loading}>
+                            {loading ? "A entrar..." : "Login"}
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     );
 }
