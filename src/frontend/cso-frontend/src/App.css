@@ -1,0 +1,30 @@
+.app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    height: 64px;
+    background: #fff;
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    z-index: 100;
+}
+
+.logo {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
+
+.footer {
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #6e7f92;
+    border-top: 1px solid #e5e5e5;
+}
