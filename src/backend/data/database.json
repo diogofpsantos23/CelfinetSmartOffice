@@ -1,4 +1,38 @@
 [
-    {"_id":{"$oid":"6801926813f011df365d6a01"},"name":"Orlando"},
-    {"_id":{"$oid":"68021ec5fed669fe1870c416"},"name":"Tomás"}
+    {
+        "username": "orlando.soares",
+        "type": "user"
+    },
+    {
+        "username": "diogo.santos",
+        "type": "user"
+    },
+    {
+        "username": "david.matos",
+        "type": "user"
+    },
+    {
+        "username": "diogo.ferreira",
+        "type": "user"
+    },
+    {
+        "username": "gabriel.rocha",
+        "type": "user"
+    },
+    {
+        "username": "gustavo.soares",
+        "type": "user"
+    },
+    {
+        "username": "vitor.ferreira",
+        "type": "user"
+    },
+    {
+        "username": "bernardo.meneses",
+        "type": "user"
+    },
+    {
+        "username": "beatriz.carvalho",
+        "type": "admin"
+    }
 ]

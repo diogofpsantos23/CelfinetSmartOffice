@@ -4,7 +4,7 @@ import "../App.css";
 function Footer() {
     return (
         <footer className="footer">
-            © {new Date().getFullYear()} - Celfinet Summer Internship
+            <h5>© {new Date().getFullYear()} - Celfinet Summer Internship</h5>
         </footer>
     );
 }

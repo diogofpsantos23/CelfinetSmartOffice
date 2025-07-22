@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   mongo:
     image: mongo:6
@@ -10,25 +12,38 @@ services:
   api:
     build:
       context: ./src/backend
+      dockerfile: Dockerfile
     container_name: api
-    env_file: [.env.docker]
+    env_file: [ ./src/backend/.env.docker ]
     ports:
       - "8080:8080"
-    depends_on: [mongo]
+    volumes:
+      - ./src/backend:/app/src/backend
+    depends_on:
+      - mongo
+
 
   frontend:
     build:
-      context: ./src/frontend
+      context: ./src/frontend/cso-frontend
+      dockerfile: Dockerfile
     container_name: frontend
+    env_file:
+      - ./src/frontend/.env.docker
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      WDS_SOCKET_HOST: localhost
+      WDS_SOCKET_PORT: 3000
+      WATCHPACK_POLLING: "true"
     ports:
       - "3000:3000"
     volumes:
-      - ./src/frontend/cso-frontend:/app/src
-    environment:
-      - WATCHPACK_POLLING=true
+      - ./src/frontend/cso-frontend:/app
+      - /app/node_modules
     depends_on:
       - api
 
+
 volumes:
   mongo_data:
-  node_deps:

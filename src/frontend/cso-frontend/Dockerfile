@@ -1,13 +1,11 @@
 FROM node:20-slim
-
 WORKDIR /app
 
-COPY cso-frontend/package*.json ./
+COPY package*.json ./
 RUN npm install
 
-COPY cso-frontend ./src
+COPY .. .
 
-WORKDIR /app/src
-
+ENV HOST=0.0.0.0 PORT=3000
 EXPOSE 3000
 CMD ["npm", "start"]

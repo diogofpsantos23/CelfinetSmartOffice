@@ -2,5 +2,6 @@ fastapi
 uvicorn
 pymongo
 python-dotenv
-streamlit
 passlib
+bcrypt
+PyJWT
