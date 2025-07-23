@@ -1,6 +1,8 @@
 fastapi
 uvicorn
-pymongo
+pymongo>=4
+dnspython>=2
+certifi
 python-dotenv
 passlib
 bcrypt
