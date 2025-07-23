@@ -59,3 +59,6 @@ def me(user=Depends(current_user)):
 @router.post("/logout")
 def logout():
     return {"ok": True}
+
+
+

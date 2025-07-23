@@ -31,14 +31,14 @@ class Database:
         with open(self.db_path, "r") as f:
             data = json.load(f)
 
-        default_pw = b"celfinet123"
+        default_pw = "celfinet123"
 
         inserted_ids = []
         for u in data:
             doc = {
                 "username": u["username"],
                 "type": u.get("type", "user"),
-                "password": bcrypt.hashpw(default_pw, bcrypt.gensalt()).decode(),
+                "password": bcrypt.hashpw(default_pw.encode("utf-8"), bcrypt.gensalt()).decode(),
                 "createdAt": datetime.utcnow()
             }
             res = self.users_collection.insert_one(doc)

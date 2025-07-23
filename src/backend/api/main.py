@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from services.db import Database
 load_dotenv(".env.docker")
 from .database import db
 from .auth_router import router as auth_router
@@ -31,6 +31,11 @@ def seed():
     from .office_seed import seed_office_days
     seed_office_days(db["office_days"], capacity=8)
 
+@app.on_event("startup")
+def init_db():
+    db_instance = Database()
+    if not db_instance.is_initialized():
+        db_instance.populate()
 
 app.include_router(auth_router)
 app.include_router(office_router)

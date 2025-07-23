@@ -17,4 +17,3 @@ ENV PYTHONPATH=/app/src/backend
 EXPOSE 8080
 
 CMD ["bash", "./scripts/start.sh"]
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]

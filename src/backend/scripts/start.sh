@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -e  # exit on first error
 
-#start api on the background
-python -m api.main
+set -e
+exec uvicorn api.main:app --host 0.0.0.0 --port 8080
