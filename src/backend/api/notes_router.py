@@ -1,5 +1,4 @@
-# api/notes_router.py
-from datetime import datetime, date, time as dtime
+from datetime import datetime, time as dtime
 from typing import Optional
 from pydantic import BaseModel, Field, validator
 from fastapi import APIRouter, Depends, HTTPException

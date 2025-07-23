@@ -1,12 +1,14 @@
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, time
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pymongo.collection import Collection
 from .database import db
 from .auth_deps import current_user
 from pydantic import BaseModel, conint
+from zoneinfo import ZoneInfo
 
 router = APIRouter(prefix="/office", tags=["office"])
 
+PT_TZ = ZoneInfo("Europe/Lisbon")
 
 def get_office_col() -> Collection:
     return db["office_days"]
@@ -58,19 +60,29 @@ class BookReq(BaseModel):
 @router.post("/book")
 def book_day(body: BookReq, user=Depends(current_user), col: Collection = Depends(get_office_col)):
     day_iso = body.date.isoformat()
-    doc = col.find_one({"date": day_iso})
-    if not doc:
-        raise HTTPException(404, "Day not found")
-    if any(b["user_id"] == user["_id"] for b in doc["bookings"]):
-        raise HTTPException(409, "Already booked")
-    if len(doc["bookings"]) >= doc["capacity"]:
-        raise HTTPException(409, "Full")
 
-    col.update_one(
-        {"date": day_iso},
-        {"$push": {
-            "bookings": {"user_id": user["_id"], "username": user["username"], "ts": datetime.utcnow().isoformat()}}}
+    if body.date < date.today():
+        raise HTTPException(400, "Não é possível reservar dias passados")
+
+    now_pt = datetime.now(PT_TZ)
+    if body.date == now_pt.date() and now_pt.time() >= time(9, 0):
+        raise HTTPException(400, "Reserva bloqueada após as 09:00 do próprio dia")
+
+    res = col.update_one(
+        {
+            "date": day_iso,
+            "bookings.user_id": {"$ne": user["_id"]},
+            "$expr": {"$lt": [{"$size": "$bookings"}, "$capacity"]}
+        },
+        {"$push": {"bookings": {
+            "user_id": user["_id"],
+            "username": user["username"],
+            "ts": datetime.utcnow().isoformat()
+        }}}
     )
+    if res.modified_count == 0:
+        raise HTTPException(409, "Full or already booked")
+
     return {"ok": True}
 
 
