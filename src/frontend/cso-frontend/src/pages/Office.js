@@ -24,6 +24,7 @@ export default function Office() {
 
     useEffect(() => {
         loadWeek();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [weekStart]);
 
     async function loadWeek() {
@@ -36,6 +37,13 @@ export default function Office() {
     const ahead = weeksDiff(baseMonday, weekStart);
     const disablePrev = ahead <= 0;
     const disableNext = ahead >= maxAhead;
+
+    // --- BLOQUEIOS POR DATA/HORA ---
+    const now = new Date();
+    const todayISO = now.toISOString().slice(0, 10);
+    const currentMinutes = now.getHours() * 60 + now.getMinutes(); // minutos do dia
+    const LOCK_MINUTES = 9 * 60; // 09:00
+    const isCurrentWeek = ahead === 0;
 
     async function toggle(day) {
         try {
@@ -93,56 +101,71 @@ export default function Office() {
                 <p>A carregar…</p>
             ) : (
                 <div className="office-table">
-                    {days.map((d) => (
-                        <div key={d.date} className="office-row">
-              <span className="day-label">
-                {ptWeekday(d.date)} {formatDatePT(d.date)}
-              </span>
+                    {days.map((d) => {
+                        const isPastDay     = isCurrentWeek && d.date < todayISO;
+                        const isTodayLocked = d.date === todayISO && currentMinutes >= LOCK_MINUTES;
+                        const lockedDay     = isPastDay || isTodayLocked;
 
-                            <div className="seats">
-                                {Array.from({ length: d.capacity }, (_, i) => {
-                                    const isReserved = i < d.bookings.length;
-                                    const booking    = isReserved ? d.bookings[i] : null;
-                                    const isMine     = booking && booking.user_id === user._id;
-                                    const seatClass  = isMine ? "mine" : isReserved ? "taken" : "free";
-                                    const seatTitle  = booking ? `@${booking.username}` : "Livre";
+                        return (
+                            <div key={d.date} className="office-row">
+                <span className="day-label">
+                  {ptWeekday(d.date)} {formatDatePT(d.date)}
+                </span>
 
-                                    return (
-                                        <div className="seat-wrapper" key={i}>
-                                            <SeatIcon
-                                                className={seatClass}
-                                                title={seatTitle}
-                                                onClick={() => (!isReserved || isMine) && toggle(d)}
-                                            />
-                                            {user?.type === "admin" && booking && (
-                                                <button
-                                                    className="kick-btn"
-                                                    onClick={() =>
-                                                        setConfirm({ open: true, day: d.date, uid: booking.user_id, name: booking.username })
-                                                    }
-                                                    title={`Remover @${booking.username}`}
-                                                >
-                                                    ✕
-                                                </button>
-                                            )}
-                                        </div>
-                                    );
-                                })}
+                                <div className="seats">
+                                    {Array.from({ length: d.capacity }, (_, i) => {
+                                        const isReserved = i < d.bookings.length;
+                                        const booking    = isReserved ? d.bookings[i] : null;
+                                        const isMine     = booking && booking.user_id === user._id;
+
+                                        let seatClass = isMine ? "mine" : isReserved ? "taken" : "free";
+                                        if (lockedDay && !isReserved) seatClass = "locked";
+
+                                        const seatTitle = lockedDay
+                                            ? (isPastDay ? "Data passada" : "Bloqueado após 09:00")
+                                            : booking
+                                                ? `@${booking.username}`
+                                                : "Livre";
+
+                                        const clickable = !lockedDay && (!isReserved || isMine);
+
+                                        return (
+                                            <div className="seat-wrapper" key={i}>
+                                                <SeatIcon
+                                                    className={seatClass}
+                                                    title={seatTitle}
+                                                    onClick={() => clickable && toggle(d)}
+                                                />
+                                                {user?.type === "admin" && booking && !lockedDay && (
+                                                    <button
+                                                        className="kick-btn"
+                                                        onClick={() =>
+                                                            setConfirm({ open: true, day: d.date, uid: booking.user_id, name: booking.username })
+                                                        }
+                                                        title={`Remover @${booking.username}`}
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                {user?.type === "admin" && !lockedDay && (
+                                    <select
+                                        className="cap-select"
+                                        value={d.capacity}
+                                        onChange={(e) => changeCapacity(d.date, Number(e.target.value))}
+                                    >
+                                        {CAP_OPTIONS.map((opt) => (
+                                            <option key={opt} value={opt}>{opt}</option>
+                                        ))}
+                                    </select>
+                                )}
                             </div>
-
-                            {user?.type === "admin" && (
-                                <select
-                                    className="cap-select"
-                                    value={d.capacity}
-                                    onChange={(e) => changeCapacity(d.date, Number(e.target.value))}
-                                >
-                                    {CAP_OPTIONS.map((opt) => (
-                                        <option key={opt} value={opt}>{opt}</option>
-                                    ))}
-                                </select>
-                            )}
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
 

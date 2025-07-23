@@ -238,6 +238,12 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.08);
 }
 
+.seat.locked {
+    fill: #bbb;
+    cursor: not-allowed;
+    opacity: .5;
+}
+
 .dashboard-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
