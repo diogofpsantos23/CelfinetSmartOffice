@@ -1,0 +1,115 @@
+:root {
+    --left-bg: #07264b;
+    --right-bg:  #F4F7FA;
+    --card-bg:   #F9FAFC;
+    --accent:    #1E2F48;
+    --accent-dark:#162336;
+    --text-dark: #07264b;
+    --text-soft: #5F6F82;
+    --border:    #A7B1BD;
+    --error:     #e53935;
+    --radius:    12px;
+    --shadow:    0 8px 24px rgba(0,0,0,.12);
+    --transition:.18s ease;
+}
+
+.auth-container {
+    display: flex;
+    min-height: 100vh;
+    background: var(--right-bg);
+    overflow: hidden;
+}
+
+.auth-left {
+    flex: 1;
+    background: var(--left-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-right {
+    flex: 1;
+    background: var(--right-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+}
+
+.auth-logo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--text-dark);
+}
+
+.auth-logo img {
+    width: 20em;
+    height: auto;
+}
+
+.logo-icon {
+    width: 64px;
+    height: 64px;
+}
+
+.auth-form-box {
+    width: 340px;
+    max-width: 90%;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 32px 32px;
+    text-align: center;
+}
+
+.auth-form-box h2 {
+    margin: 0 0 10px;
+    color: var(--text-dark);
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.auth-form-box input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+}
+.auth-form-box input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(30,47,72,.15);
+}
+
+.auth-btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 10px 0;
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    transition: background var(--transition), transform var(--transition), opacity var(--transition);
+    margin-top: 10px;
+}
+
+.auth-btn:hover:not(:disabled) {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+}
+
+.auth-btn:disabled {
+    opacity: .6;
+    cursor: default;
+}
+
+.auth-error {
+    color: var(--error);
+    margin: 4px 0 10px;
+    font-size: 13px;
+}

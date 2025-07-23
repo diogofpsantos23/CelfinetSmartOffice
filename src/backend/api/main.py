@@ -1,31 +1,37 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from api.routes import router
-import uvicorn
 import os
 from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-load_dotenv()
+load_dotenv(".env.docker")
+from .database import db
+from .auth_router import router as auth_router
+from .office_router import router as office_router
+from .notes_router import router as notes_router
 
 app = FastAPI()
 
-ENV = os.getenv("ENV", "dev")
-
+origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-@app.get("/", summary="Health‑check")
-async def root():
-    return {"status": "OK", "service": "Smart Office API"}
 
-app.include_router(router)
+@app.get("/")
+def root():
+    return {"status": "OK"}
 
-if __name__ == "__main__":
-    host = os.getenv("HOST", "0.0.0.0")
-    port = int(os.getenv("PORT", 8080))
-    uvicorn.run("api.main:app", host=host, port=port, reload=True)
+
+@app.on_event("startup")
+def seed():
+    from .office_seed import seed_office_days
+    seed_office_days(db["office_days"], capacity=8)
+
+
+app.include_router(auth_router)
+app.include_router(office_router)
+app.include_router(notes_router)
