@@ -13,6 +13,12 @@
     --transition: .18s ease;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 html, body {
     font-family: 'Roboto', Arial, sans-serif;
     font-weight: 400;
@@ -37,6 +43,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .app-header {
@@ -146,9 +153,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .office-panel {
-    max-width: 900px;
-    margin: 24px auto;
-    padding: 24px;
+    min-width: 32vw;
+    max-height: 70vh;
+    padding: 20px 24px;
     background: white;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
@@ -245,9 +252,30 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .dashboard-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 2em 6em;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100vw;
+    padding: 2rem;
+    gap: 2rem;
+}
+
+.dashboard-office {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: space-around;
+    gap: 2rem;
+}
+
+.dashboard-notes {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
 }
 
 .seat-wrapper {
@@ -343,15 +371,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .notes-panel {
-    margin-top: 24px;
+    min-width: 32vw;
     background: var(--card-bg);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     padding: 20px 24px;
-    max-height: 340px; /* scrollable */
+    max-height: 60vh;
     display: flex;
     flex-direction: column;
-    margin-bottom: auto;
 }
 
 .notes-header {
@@ -455,4 +482,21 @@ h1, h2, h3, h4, h5, h6 {
 
 .note-save-btn {
     margin-left: 2em;
+}
+
+.kanban-add-btn {
+    padding: .2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    font-weight: bold;
+    color: #333333;
+    font-size: 16px;
+    background-color: white;
+    border: none;
+}
+
+.kanban-add-btn:hover {
+    transform: scale(1.05);
 }
