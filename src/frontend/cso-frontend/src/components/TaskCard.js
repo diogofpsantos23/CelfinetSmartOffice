@@ -4,12 +4,15 @@ import { Draggable } from "react-beautiful-dnd";
 import cat from './../assets/cat.jpg'
 
 const TaskCard = ({ item, index }) => {
-    const getInitials = (name = "") =>
-        name
-        .split(" ")
-        .map((word) => word[0])
-        .join("")
-        .toUpperCase();
+
+    const statusEmoji =
+        item.status === "todo"
+            ? "⏰"
+            : item.status === "inprogress"
+            ? "⏳"
+            : item.status === "done"
+            ? "✅"
+            : "";
 
     return (
         <Draggable index={index} draggableId={item.id} type={item.status}>
@@ -36,7 +39,7 @@ const TaskCard = ({ item, index }) => {
                                     />
                                 </Avatar>
                             }
-                            title={item.title}
+                            title={item.title + "  " + statusEmoji}
                             subheader={item.description}
                             titleTypographyProps={{
                                 sx: {

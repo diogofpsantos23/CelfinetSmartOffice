@@ -523,3 +523,7 @@ h1, h2, h3, h4, h5, h6 {
     bottom: .2rem;
     right: 1rem;
 }
+
+.card:hover::after {
+  content: "⏰"; /* or "⏳" or "✅" */
+}

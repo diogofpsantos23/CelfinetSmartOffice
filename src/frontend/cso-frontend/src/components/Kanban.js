@@ -16,7 +16,7 @@ import {
   Button
 } from '@mui/material';
 import { AuthContext } from "../context/AuthContext";
-import { getKanban } from "../lib/kanban";
+import { getKanban, addKanban, modifyKanban, deleteKanbanCard } from "../lib/kanban";
 
 const Container = styled("div")(() => ({
   display: "flex",
@@ -80,15 +80,17 @@ const Kanban = () => {
 
             const { source, destination } = result;
             const newColumnsData = [...columnsData];
+            let draggedItem
 
             if (source.droppableId !== destination.droppableId) {
                 const destColumnId = destination.droppableId;
-                const draggedItem = newColumnsData.find(item => item.id === result.draggableId);
+                draggedItem = newColumnsData.find(item => item.id === result.draggableId);
 
                 if (draggedItem) {
                     draggedItem.status = destColumnId;
                 }
                 setColumns(buildColumns(newColumnsData));
+                handleUpdateCard(draggedItem)
             } else {
                 const columnId = source.droppableId;
                 const columnItems = columns[columnId].items;
@@ -109,7 +111,7 @@ const Kanban = () => {
         }
     };
 
-    const handleAddCard = (status, title, description) => {
+    const handleAddCard = async (status, title, description) => {
         const newItem = {
             id: uuidv4(),
             user: user?.username,
@@ -118,9 +120,21 @@ const Kanban = () => {
             status,
         };
 
-        const updatedColumnsData = [...columnsData, newItem];
-        setcolumnsData(updatedColumnsData);
-        setColumns(buildColumns(updatedColumnsData));
+        try {
+            const res = await addKanban(newItem)
+
+            if (res.success) {
+                const card = res.kanban
+                const updatedColumnsData = [...columnsData, card];
+                setcolumnsData(updatedColumnsData);
+                setColumns(buildColumns(updatedColumnsData));
+            }
+
+        }
+        catch (err) {
+            console.error("Error adding new kanban card: ",err)
+        }
+
     };
 
     const handleCardClick = (item) => {
@@ -130,6 +144,52 @@ const Kanban = () => {
             description: item.description
         });
         setOpenModal(true); 
+
+    };
+
+    const handleUpdateCard = async (updatedCard) => {
+        try {
+            const res = await modifyKanban(updatedCard);
+            if (res.success) {
+                const updatedColumnsData = columnsData.map(card =>
+                    card.id === updatedCard.id ? updatedCard : card
+                );
+                setcolumnsData(updatedColumnsData);
+                setColumns(buildColumns(updatedColumnsData));
+            }
+        } catch (err) {
+            console.error("Error while updating card. ", err);
+        }
+    }
+
+    const handleDeleteCard = async () => {
+        try {
+            const res = await deleteKanbanCard(selectedCard.id);
+                if (res.success) {
+                    const updated = columnsData.filter(card => card.id !== selectedCard.id);
+                    setcolumnsData(updated);
+                    setColumns(buildColumns(updated));
+                }
+        } catch (err) {
+            console.error("Error deleting card: ", err);
+        }
+        finally {
+            handleCloseModal()
+            window.location.reload()
+        }
+    };
+
+    const handleOpenAddCardModal = (columnId) => {
+        setNewCardStatus(columnId);
+        setSelectedCard(null); 
+        setFormData({ title: '', description: '' });
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+        setSelectedCard(null);
+        setFormData({ title: '', description: '' }); 
     };
 
     return (
@@ -165,10 +225,7 @@ const Kanban = () => {
                                     <Grid item>
                                         <button
                                           className="kanban-add-btn"
-                                            onClick={() => {
-                                                setNewCardStatus(columnId);
-                                                setOpenModal(true);
-                                            }}
+                                            onClick={() => handleOpenAddCardModal(columnId)}
                                             >
                                             Add Card
                                         </button>
@@ -190,7 +247,7 @@ const Kanban = () => {
                 </TaskColumnStyles>
             </Container>
         </DragDropContext>
-        <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="sm">
+        <Dialog onClose={() => handleCloseModal()} open={openModal} fullWidth maxWidth="sm">
             <DialogTitle>Add New Card</DialogTitle>
             <DialogContent>
                 <TextField
@@ -213,28 +270,41 @@ const Kanban = () => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => setOpenModal(false)}>Cancel</Button>
+                {selectedCard && (
+                    <Button
+                        color="error"
+                        onClick={() => {
+                            handleDeleteCard()
+                        }}
+                    >
+                        Delete
+                    </Button>
+                    )}
+                <Button onClick={() => handleCloseModal()}>Cancel</Button>
                 <Button
                     variant="contained"
-                    onClick={() => {
+                    onClick={async () => {
                         if (selectedCard) {
-                            const updatedColumnsData = columnsData.map(card =>
-                                card.id === selectedCard.id
-                                    ? { ...card, title: formData.title, description: formData.description }
-                                    : card
-                            );
-                            setcolumnsData(updatedColumnsData);
-                            setColumns(buildColumns(updatedColumnsData))
+                            const hasChanged =
+                                selectedCard.title !== formData.title ||
+                                selectedCard.description !== formData.description;
+
+                            if (hasChanged) {
+                                const updatedCard = {
+                                    ...selectedCard,
+                                    title: formData.title,
+                                    description: formData.description
+                                };
+                                handleUpdateCard(updatedCard)
+                            }
                         } else {
-                            handleAddCard(newCardStatus, formData.title, formData.description);
+                            await handleAddCard(newCardStatus, formData.title, formData.description);
                         }
-                        setFormData({ title: '', description: '' });
-                        setSelectedCard(null);
-                        setOpenModal(false);
+                        handleCloseModal()
                     }}
                     disabled={!formData.title.trim()}
                 >
-                Add
+                    {selectedCard ? "Save" : "Add"}
                 </Button>
             </DialogActions>
             </Dialog>

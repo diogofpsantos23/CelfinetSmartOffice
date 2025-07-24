@@ -30,11 +30,41 @@ def list_kanban(user=Depends(current_user), users=Depends(get_users_collection))
     doc = users.find_one({"_id": ObjectId(user["_id"])}, {"kanban": 1, "_id": 0})
     return {"kanban": doc.get("kanban", [])}
 
-@router.delete("/")
-def delete_kanban(card_id: str, user=Depends(current_user), users=Depends(get_users_collection)):
+@router.put("/add")
+def add_card(body: KanbanItem, user=Depends(current_user), users=Depends(get_users_collection)):
+    kanban_card = body.model_dump()
+    users.update_one(
+        {"_id": ObjectId(user["_id"])},
+        {"$push": {"kanban": kanban_card}}  
+    )
+    return {"success": True, "kanban": kanban_card}
+
+@router.post("/modify")
+def modify_card(body: KanbanItem, user=Depends(current_user), users=Depends(get_users_collection)):
+    kanban_card = body.model_dump()
+    
+    result = users.update_one(
+        {
+            "_id": ObjectId(user["_id"]),
+            "kanban.id": kanban_card["id"]
+        },
+        {
+            "$set": {
+                "kanban.$": kanban_card
+            }
+        }
+    )
+    
+    return {
+        "success": result.modified_count > 0,
+        "kanban": kanban_card
+    }
+
+@router.delete("/{id}")
+def delete_kanban(id: str, user=Depends(current_user), users=Depends(get_users_collection)):
     res = users.update_one(
         {"_id": ObjectId(user["_id"])},
-        {"$pull": {"kanban": {"id": card_id}}}
+        {"$pull": {"kanban": {"id": id}}}
     )
     if res.modified_count == 0:
         raise HTTPException(404, "Card não encontrado")
