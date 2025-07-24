@@ -18,6 +18,7 @@ const TaskCard = ({ item, index }) => {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
+                    className="card-info"
                 >
                     <Card sx={{ m: 1, boxShadow: 3 }}>
                         <CardHeader
@@ -37,7 +38,20 @@ const TaskCard = ({ item, index }) => {
                             }
                             title={item.title}
                             subheader={item.description}
+                            titleTypographyProps={{
+                                sx: {
+                                    wordBreak: "break-word",
+                                    whiteSpace: "normal",
+                                }
+                            }}
+                            subheaderTypographyProps={{
+                                sx: {
+                                    wordBreak: "break-word",
+                                    whiteSpace: "normal",
+                                }
+                            }}
                         />
+                        <span className="card-date">{item.date}</span>
                     </Card>
                 </div>
             )}

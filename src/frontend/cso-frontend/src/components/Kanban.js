@@ -1,10 +1,10 @@
-import { useState, useContext} from "react";
+import { useState, useContext, useEffect} from "react";
 import styled from "@emotion/styled";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { Grid, Box } from "@mui/material";
 import Divider from "@mui/material/Divider";
 
-import { buildColumns, CandidatesData } from "./KanbanData";
+import { buildColumns } from "./KanbanData";
 import TaskCard from "./TaskCard";
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -16,7 +16,7 @@ import {
   Button
 } from '@mui/material';
 import { AuthContext } from "../context/AuthContext";
-
+import { getKanban } from "../lib/kanban";
 
 const Container = styled("div")(() => ({
   display: "flex",
@@ -52,54 +52,62 @@ const FilterIcon = styled("span")(() => ({
 }));
 
 const Kanban = () => {
-    const [candidates, setCandidates] = useState(CandidatesData);
-    const [columns, setColumns] = useState(buildColumns(CandidatesData));
+    const [columnsData, setcolumnsData] = useState([]);
+    const [columns, setColumns] = useState(buildColumns(columnsData));
     const [openModal, setOpenModal] = useState(false);
     const [newCardStatus, setNewCardStatus] = useState(null);
     const [selectedCard, setSelectedCard] = useState(null)
     const [formData, setFormData] = useState({ title: '', description: '' });
     
     const { user } = useContext(AuthContext);   
+    
+    useEffect(() => {
+        load();
+    }, []);
 
+    useEffect(() => {
+        setColumns(buildColumns(columnsData));
+    }, [columnsData]);
 
-
-  const onDragEnd = (result) => { // Removed columns and setColumns from arguments
-    if (!result.destination) return;
-
-    const { source, destination } = result;
-
-    // Create a mutable copy of the candidates array to modify
-    const newCandidates = [...candidates];
-
-    if (source.droppableId !== destination.droppableId) {
-        const destColumnId = destination.droppableId;
-
-        // Find the dragged item in the newCandidates array and update its status
-        const draggedItem = newCandidates.find(item => item.id === result.draggableId);
-        if (draggedItem) {
-            draggedItem.status = destColumnId;
-        }
-
-        setColumns(buildColumns(newCandidates));
-
-
-    } else {
-        // Moving within the same column (no status change needed)
-        const columnId = source.droppableId;
-        const columnItems = columns[columnId].items;
-        const copiedItems = [...columnItems];
-        const [removed] = copiedItems.splice(source.index, 1);
-        copiedItems.splice(destination.index, 0, removed);
-
-        setColumns({
-            ...columns,
-            [columnId]: {
-                ...columns[columnId],
-                items: copiedItems
-            },
-        });
+    async function load() {
+        const data = await getKanban();
+        setcolumnsData(data);
     }
-  };
+
+    const onDragEnd = (result) => {
+        try {
+            if (!result.destination) return;
+
+            const { source, destination } = result;
+            const newColumnsData = [...columnsData];
+
+            if (source.droppableId !== destination.droppableId) {
+                const destColumnId = destination.droppableId;
+                const draggedItem = newColumnsData.find(item => item.id === result.draggableId);
+
+                if (draggedItem) {
+                    draggedItem.status = destColumnId;
+                }
+                setColumns(buildColumns(newColumnsData));
+            } else {
+                const columnId = source.droppableId;
+                const columnItems = columns[columnId].items;
+                const copiedItems = [...columnItems];
+                const [removed] = copiedItems.splice(source.index, 1);
+                copiedItems.splice(destination.index, 0, removed);
+
+                setColumns({
+                    ...columns,
+                    [columnId]: {
+                    ...columns[columnId],
+                    items: copiedItems
+                    },
+                });
+            }
+        } catch (error) {
+            console.error("Error during drag and drop:", error);
+        }
+    };
 
     const handleAddCard = (status, title, description) => {
         const newItem = {
@@ -110,9 +118,9 @@ const Kanban = () => {
             status,
         };
 
-        const updatedCandidates = [...candidates, newItem];
-        setCandidates(updatedCandidates);
-        setColumns(buildColumns(updatedCandidates));
+        const updatedColumnsData = [...columnsData, newItem];
+        setcolumnsData(updatedColumnsData);
+        setColumns(buildColumns(updatedColumnsData));
     };
 
     const handleCardClick = (item) => {
@@ -170,7 +178,7 @@ const Kanban = () => {
                             <Divider />
 
                             {columnData.items.map((item, idx) => (
-                                <div onClick={()=>handleCardClick(item)}>
+                                <div key={item.id} onClick={()=>handleCardClick(item)}>
                                     <TaskCard key={item.id} item={item} index={idx} />
                                 </div>
                             ))}
@@ -210,13 +218,13 @@ const Kanban = () => {
                     variant="contained"
                     onClick={() => {
                         if (selectedCard) {
-                            const updatedCandidates = candidates.map(card =>
+                            const updatedColumnsData = columnsData.map(card =>
                                 card.id === selectedCard.id
                                     ? { ...card, title: formData.title, description: formData.description }
                                     : card
                             );
-                            setCandidates(updatedCandidates);
-                            setColumns(buildColumns(updatedCandidates))
+                            setcolumnsData(updatedColumnsData);
+                            setColumns(buildColumns(updatedColumnsData))
                         } else {
                             handleAddCard(newCardStatus, formData.title, formData.description);
                         }
