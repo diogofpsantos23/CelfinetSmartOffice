@@ -24,38 +24,47 @@ export default function Header() {
         return () => document.removeEventListener("mousedown", onClick);
     }, []);
 
+    const getUserName = () => {
+        if (!user || !user.username) return "";
+        const [first, last] = user.username.split(".");
+        const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
+        const firstName = capitalize(first);
+        const lastName = capitalize(last);
+        return `${firstName} ${lastName}`;
+    }
+
     return (
         <header className="app-header">
             <img src={logo} alt="Celfinet Smart Office" className="logo"/>
-            <div className="spacer"/>
             {user && (
-                <>
-                <Clock />
-                <div className="profile-wrapper" ref={menuRef}>
-                    <button
-                        className="avatar-btn"
-                        aria-haspopup="true"
-                        aria-expanded={open}
-                        onClick={() => setOpen((v) => !v)}
-                        title={user.username}
-                    >
-                        <img
-                            src={profileIcon}
-                            alt={user.username}
-                            className="avatar-img"
-                        />
-                    </button>
+                <div className="header-user">
+                    <span className="header-user-name">Olá, {getUserName()}</span>
+                    <div className="profile-wrapper" ref={menuRef}>
+                        <Clock />
+                        <button
+                            className="avatar-btn"
+                            aria-haspopup="true"
+                            aria-expanded={open}
+                            onClick={() => setOpen((v) => !v)}
+                            title={user.username}
+                        >
+                            <img
+                                src={profileIcon}
+                                alt={user.username}
+                                className="avatar-img"
+                            />
+                        </button>
 
-                    {open && (
-                        <div className="profile-menu">
-                            <div className="profile-name">@{user.username}</div>
-                            <button className="logout-btn" onClick={handleLogout}>
-                                Logout
-                            </button>
-                        </div>
-                    )}
+                        {open && (
+                            <div className="profile-menu">
+                                <div className="profile-name">@{user.username}</div>
+                                <button className="logout-btn" onClick={handleLogout}>
+                                    Logout
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
-                </>
             )}
         </header>
     );

@@ -8,6 +8,7 @@ from .database import db
 from .auth_router import router as auth_router
 from .office_router import router as office_router
 from .notes_router import router as notes_router
+from .kanban_router import router as kanban_router
 
 app = FastAPI()
 
@@ -40,3 +41,4 @@ def init_db():
 app.include_router(auth_router)
 app.include_router(office_router)
 app.include_router(notes_router)
+app.include_router(kanban_router)
