@@ -51,7 +51,7 @@ const FilterIcon = styled("span")(() => ({
   color: "text.secondary",
 }));
 
-const Kanban = () => {
+const KanbanBoard    = () => {
     const [columnsData, setcolumnsData] = useState([]);
     const [columns, setColumns] = useState(buildColumns(columnsData));
     const [openModal, setOpenModal] = useState(false);
@@ -312,4 +312,4 @@ const Kanban = () => {
     );
 };
 
-export default Kanban;
+export default KanbanBoard;

@@ -9,6 +9,7 @@ import PublicRoute from "./components/PublicRoute";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Logout from "./pages/Logout";
+import Kanban from "./pages/Kanban";
 
 function App() {
     return (
@@ -28,6 +29,15 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <Dashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/kanban"
+                        element={
+                            <ProtectedRoute>
+                                <Kanban />
                             </ProtectedRoute>
                         }
                     />

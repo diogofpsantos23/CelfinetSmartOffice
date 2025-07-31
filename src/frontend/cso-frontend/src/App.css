@@ -1,4 +1,6 @@
 :root {
+    --primary-color: #1E2F48;
+    --header-height: 60px;
     --left-bg: #07264b;
     --right-bg: #F4F7FA;
     --card-bg: #F9FAFC;
@@ -48,11 +50,30 @@ h1, h2, h3, h4, h5, h6 {
 
 .app-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 0 24px;
-    border-bottom: 1px solid #ddd;
-    background: #fff;
+    align-items: center;
+    padding: 0.25rem 1rem 0;
+    background-color: white;
+    height: var(--header-height);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    gap: 1rem;
+}
+
+.header--hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .header-user{
@@ -67,6 +88,49 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-dark);
     font-size: 20px;
     font-weight: 500;
+}
+
+.header-nav {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    height: 100%;
+}
+
+.nav-link {
+    position: relative;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--primary-color);
+    padding: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    width: 0%;
+    height: 4px;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease-in-out;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--primary-color);
 }
 
 .logo {
@@ -147,7 +211,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .clock {
-    margin-right: 18px;
     font-family: "Roboto Mono", monospace;
     font-size: 16px;
     font-weight: 600;
@@ -164,7 +227,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .office-panel {
-    min-width: 32vw;
+    min-width: 40vw;
     max-height: 70vh;
     padding: 20px 24px;
     background: white;
@@ -279,7 +342,7 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     align-items: center;
     justify-content: space-around;
-    gap: 2rem;
+    gap: 1rem;
 }
 
 .dashboard-notes {
