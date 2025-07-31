@@ -76,8 +76,12 @@ export default function Header() {
 
     const navItems = [
         { to: "/dashboard", label: "Dashboard" },
-        { to: "/kanban", label: "Kanban Board" }
+        { to: "/kanban", label: "Kanban Board" },
+        { to: "/mood", label: "Mood Board" },
     ];
+    if (user?.type === "admin") {
+        navItems.push({ to: "/analytics", label: "Analytics" });
+    }
 
     return (
         <>

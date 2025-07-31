@@ -46,9 +46,9 @@ const Title = styled("span")(() => ({
   fontSize: 16,
   paddingBottom: "1.5px",
 }));
-const FilterIcon = styled("span")(() => ({
-  marginBottom: "1.5px",
-  color: "text.secondary",
+styled("span")(() => ({
+    marginBottom: "1.5px",
+    color: "text.secondary",
 }));
 
 const KanbanBoard    = () => {
@@ -199,7 +199,7 @@ const KanbanBoard    = () => {
             >
             <Container>
                 <TaskColumnStyles>
-                {Object.entries(columns).map(([columnId, columnData], index) => (
+                {Object.entries(columns).map(([columnId, columnData]) => (
                     <Droppable key={columnId} droppableId={columnId}>
                         {(provided, snapshot) => (
                         <TaskList
@@ -295,7 +295,7 @@ const KanbanBoard    = () => {
                                     title: formData.title,
                                     description: formData.description
                                 };
-                                handleUpdateCard(updatedCard)
+                                await handleUpdateCard(updatedCard)
                             }
                         } else {
                             await handleAddCard(newCardStatus, formData.title, formData.description);

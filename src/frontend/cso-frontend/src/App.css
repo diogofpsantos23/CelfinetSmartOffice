@@ -117,7 +117,7 @@ h1, h2, h3, h4, h5, h6 {
     position: absolute;
     bottom: 2px;
     left: 0;
-    width: 0%;
+    width: 0;
     height: 4px;
     background-color: var(--primary-color);
     transition: width 0.3s ease-in-out;
@@ -333,7 +333,6 @@ h1, h2, h3, h4, h5, h6 {
     height: 100%;
     width: 100vw;
     padding: 2rem;
-    gap: 2rem;
 }
 
 .dashboard-office {
@@ -450,9 +449,10 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     padding: 20px 24px;
-    max-height: 48vh;
+    max-height: 65vh;
     display: flex;
     flex-direction: column;
+    margin-bottom: auto;
 }
 
 .notes-header {
