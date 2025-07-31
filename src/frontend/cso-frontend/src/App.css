@@ -226,7 +226,7 @@ h1, h2, h3, h4, h5, h6 {
     opacity: .9;
 }
 
-.office-panel {
+.office-panel, .analytics-panel {
     min-width: 40vw;
     max-height: 70vh;
     padding: 20px 24px;
@@ -588,5 +588,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card:hover::after {
-  content: "⏰"; /* or "⏳" or "✅" */
+  content: "⏰";
+}
+
+.analytics-container {
+    padding: 3rem 12rem;
+}
+
+.analytics-panel {
+    padding-top: 2rem;
 }
