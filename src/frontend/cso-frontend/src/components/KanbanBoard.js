@@ -46,12 +46,12 @@ const Title = styled("span")(() => ({
   fontSize: 16,
   paddingBottom: "1.5px",
 }));
-const FilterIcon = styled("span")(() => ({
-  marginBottom: "1.5px",
-  color: "text.secondary",
+styled("span")(() => ({
+    marginBottom: "1.5px",
+    color: "text.secondary",
 }));
 
-const Kanban = () => {
+const KanbanBoard    = () => {
     const [columnsData, setcolumnsData] = useState([]);
     const [columns, setColumns] = useState(buildColumns(columnsData));
     const [openModal, setOpenModal] = useState(false);
@@ -199,7 +199,7 @@ const Kanban = () => {
             >
             <Container>
                 <TaskColumnStyles>
-                {Object.entries(columns).map(([columnId, columnData], index) => (
+                {Object.entries(columns).map(([columnId, columnData]) => (
                     <Droppable key={columnId} droppableId={columnId}>
                         {(provided, snapshot) => (
                         <TaskList
@@ -295,7 +295,7 @@ const Kanban = () => {
                                     title: formData.title,
                                     description: formData.description
                                 };
-                                handleUpdateCard(updatedCard)
+                                await handleUpdateCard(updatedCard)
                             }
                         } else {
                             await handleAddCard(newCardStatus, formData.title, formData.description);
@@ -312,4 +312,4 @@ const Kanban = () => {
     );
 };
 
-export default Kanban;
+export default KanbanBoard;
