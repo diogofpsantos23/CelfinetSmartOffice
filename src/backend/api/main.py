@@ -12,6 +12,7 @@ from .office_router import router as office_router
 from .notes_router import router as notes_router
 from .kanban_router import router as kanban_router
 from .analytics_router import router as analytics_router
+from .moodBoard_router import router as moodBoard_router
 
 app = FastAPI()
 
@@ -48,3 +49,4 @@ app.include_router(office_router)
 app.include_router(notes_router)
 app.include_router(kanban_router)
 app.include_router(analytics_router)
+app.include_router(moodBoard_router)

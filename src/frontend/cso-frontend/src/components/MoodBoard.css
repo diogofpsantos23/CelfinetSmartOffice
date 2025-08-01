@@ -1,0 +1,124 @@
+.mood-page {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.mood-container{
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.mood-panel {
+    width: 100vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.mood-panel-today {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 20vh;
+    color: var(--text-dark);
+}
+
+.mood-panel-overview {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    height: 50vh;
+}
+
+.mood-panel-calendar-donut {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.mood-day-day {
+    width: 50%;
+    height: 100%;
+}
+
+.mood-calendar {
+    display: flex;
+    width: 100%;
+}
+
+.mood-counter {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 60%;
+    padding: 1rem;
+    align-items: center;
+}
+
+.mood-counter-donut {
+    width: 80%;
+    margin-bottom: -8rem;
+}
+
+.mood-counter-donut-counter {
+    font-size: 30px;
+    font-weight: 700;
+    font-size: 1.5rem; 
+    font-weight: bold;
+    color: #333; 
+    pointer-events: none; 
+}
+
+.mood-counter-emojis {
+    display: flex;
+    width: 75%;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.emoji-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.2rem;
+  margin: 0 0.5rem;
+}
+
+.emoji-symbol {
+  font-size: 2rem;
+}
+
+.emoji_text {
+  font-size: 1rem;
+}
+
+.emoji-count {
+  font-weight: 500;
+  color: #555;
+}
+
+.mood-category-boxes {
+    display: flex;
+    gap: 1rem;
+}
+.mood-box {
+    cursor: pointer;
+    font-size: 2rem; 
+    border: 1px solid #ccc; 
+    padding: 1rem; 
+    border-radius: 8px;
+    text-align: center;
+}

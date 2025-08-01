@@ -16,6 +16,9 @@ security = HTTPBearer(auto_error=False)
 def get_users_collection() -> Collection:
     return db[os.getenv("USERS_COLLECTION_NAME")]
 
+def get_moodBoard_collection() -> Collection:
+    return db[os.getenv("MOODBOARD_COLLECTION")]
+
 def create_token(sub: str, minutes: int) -> str:
     payload = {"sub": sub, "exp": datetime.utcnow() + timedelta(minutes=minutes)}
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGO)
