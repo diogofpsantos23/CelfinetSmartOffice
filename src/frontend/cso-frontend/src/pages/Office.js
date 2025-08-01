@@ -24,7 +24,6 @@ export default function Office() {
 
     useEffect(() => {
         loadWeek();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [weekStart]);
 
     async function loadWeek() {
@@ -41,8 +40,8 @@ export default function Office() {
     // --- BLOQUEIOS POR DATA/HORA ---
     const now = new Date();
     const todayISO = now.toISOString().slice(0, 10);
-    const currentMinutes = now.getHours() * 60 + now.getMinutes(); // minutos do dia
-    const LOCK_MINUTES = 9 * 60; // 09:00
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const LOCK_MINUTES = 9 * 60;
     const isCurrentWeek = ahead === 0;
 
     async function toggle(day) {
@@ -121,11 +120,20 @@ export default function Office() {
                                         let seatClass = isMine ? "mine" : isReserved ? "taken" : "free";
                                         if (lockedDay && !isReserved) seatClass = "locked";
 
-                                        const seatTitle = lockedDay
-                                            ? (isPastDay ? "Data passada" : "Bloqueado após 09:00")
-                                            : booking
-                                                ? `@${booking.username}`
-                                                : "Livre";
+                                        let seatTitle;
+                                        if (isReserved) {
+                                            seatTitle = `@${booking.username}`;
+                                            if (isPastDay) {
+                                                seatTitle += " (data passada)";
+                                            } else if (isTodayLocked) {
+                                                seatTitle += " (bloqueado após 09:00)";
+                                            }
+                                        } else if (lockedDay) {
+                                            seatTitle = isPastDay ? "Data passada" : "Bloqueado após 09:00";
+                                        } else {
+                                            seatTitle = "Livre";
+                                        }
+
 
                                         const clickable = !lockedDay && (!isReserved || isMine);
 
