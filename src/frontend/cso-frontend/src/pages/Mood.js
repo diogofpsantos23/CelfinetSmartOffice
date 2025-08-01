@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import '../components/MoodBoard.css'
 import MoodBoard from "../components/MoodBoard";
+import '../components/MoodBoard.css'
 
 export default function Mood() {
     return (
