@@ -94,39 +94,68 @@ export default function MoodBoard() {
     const [topEmojis, setTopEmojis] = useState([]);
     const [moodCount, setMoodCount] = useState(0)
     const [state, setState] = useState({
-          
-            series: [],
-            options: {
-              chart: {
-                type: 'donut',
-              },
-              plotOptions: {
-                pie: {
-                  startAngle: -90,
-                  endAngle: 90,
-                  offsetY: 10
-                }
-              },
-              grid: {
+        series: [], 
+        moodCount: 0,
+        options: {
+            chart: {
+                type: "donut",
+                width: "100%", 
+            },
+
+            plotOptions: {
+            pie: {
+                startAngle: -90,
+                endAngle: 90,
+                offsetY: 10, 
+                donut: {
+                size: "75%",
+                labels: {
+                    show: true,
+                    name: {
+                        show: true,
+                        fontSize: "22px",
+                        offsetY: -50, // shift upward
+                        formatter: () => "Total",
+                    },
+                    value: {
+                        show: true,
+                        fontSize: "20px",
+                        offsetY: -30, // shift upward
+                        formatter: function () {
+                            return state.moodCount;
+                        },
+                    },
+                    total: {
+                        show: true, 
+                        formatter: function () {
+                            return state.moodCount;
+                        },                    
+                    },
+                },
+                },
+            },
+            },
+            grid: {
                 padding: {
-                  bottom: -100
-                }
-              },
-              responsive: [{
+                    bottom: 0, 
+                },
+            },
+            responsive: [
+            {
                 breakpoint: 480,
                 options: {
-                  chart: {
-                    width: 200
-                  },
-                  legend: {
-                    position: 'bottom'
-                  }
-                }
-              }]
+                chart: {
+                    width: 400,
+                },
+                legend: {
+                    position: "bottom",
+                },
+                },
             },
-          
-          
+            ],
+        },
         });
+
 
     const getUserName = () => {
         if (!user || !user.username) return "";
@@ -196,42 +225,60 @@ export default function MoodBoard() {
         try {
             const res = await getMoods();
             if (res) {
-                //console.log(res)
-                const { moods } = res;
-                const top = extractTopEmojis(moods);
-                setTopEmojis(top);
-                const { series, labels } = parseMoodsToChartData(moods);
-                setMoodCount(moods.length);
-                
-                setState(prev => ({
-                    ...prev,
-                    series,
-                    options: {
-                    ...prev.options,
-                        labels,
-                        legend: { show: false },
-                        tooltip: {
-                            y: {
-                            formatter: (value) => {
-                                return `${value}`;
-                            }
-                            }
-                        }
-                    }
-                }));
+            const { moods } = res;
+            const moodCount = moods.length;
+            const top = extractTopEmojis(moods);
+            setTopEmojis(top);
 
+            const { series, labels } = parseMoodsToChartData(moods);
+
+            setState(prev => ({
+                ...prev,
+                series,
+                options: {
+                ...prev.options,
+                labels,
+                legend: { show: false },
+                tooltip: {
+                    y: {
+                    formatter: value => `${value}`,
+                    },
+                },
+                plotOptions: {
+                    ...prev.options.plotOptions,
+                    pie: {
+                    ...prev.options.plotOptions.pie,
+                    donut: {
+                        ...prev.options.plotOptions.pie.donut,
+                        labels: {
+                        ...prev.options.plotOptions.pie.donut.labels,
+                        value: {
+                            ...prev.options.plotOptions.pie.donut.labels.value,
+                            formatter: () => `${moodCount}`,
+                        },
+                        total: {
+                            ...prev.options.plotOptions.pie.donut.labels.total,
+                            formatter: () => `${moodCount}`,
+                        },
+                        },
+                    },
+                    },
+                },
+                },
+            }));
             }
         } catch (err) {
             console.error("Error fetching moods:", err);
         }
-    };
+        };
+
 
     const fetchMoodBoard = async () => {
         try{
             const res = await getMoodBoard()
 
             if (res) {
-                //console.log(res)
+                console.log(res)
                 const categories = res.mood_categories.map(cat => ({
                     id: cat._id,
                     label: cat.label,
@@ -257,69 +304,62 @@ export default function MoodBoard() {
 
         return (
             <section className="mood-panel-today">
+                <div className="mood-category-boxes">
+                    {moodCategories.map(({ id, label, defaultEmoji }) => (
+                        <div
+                            key={id}
+                            className="mood-box"
+                            onClick={() => setOpenCategory(id)}
+                            title={label}
+                        >
+                            {defaultEmoji}
+                            <div className="mood-box-label">{label}</div>
+                        </div>
+                    ))}
+                </div>
 
-            <div className="mood-category-boxes">
-                {moodCategories.map(({ id, label, defaultEmoji }) => (
-                <div
-                    key={id}
-                    className="mood-box"
-                    onClick={() => setOpenCategory(id)}
-                    title={label}
-                >
-                    {defaultEmoji}
-                    <div style={{ fontSize: "0.8rem", marginTop: "0.5rem" }}>{label}</div>
-                </div>
-                ))}
-            </div>
-
-            {/* Modal */}
-            {openCategory && (
-                <div
-                className="modal-backdrop"
-                style={{
-                    position: "fixed",
-                    inset: 0,
-                    backgroundColor: "rgba(0,0,0,0.5)",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-                onClick={() => setOpenCategory(null)}
-                >
-                <div
-                    className="modal-content"
-                    style={{ backgroundColor: "white", padding: "2rem", borderRadius: "10px", maxWidth: "400px" }}
-                    onClick={(e) => e.stopPropagation()} 
-                >
-                    <h3>{moodCategories.find((cat) => cat.id === openCategory).label}</h3>
-                    <ul style={{ listStyle: "none", padding: 0 }}>
-                    {moodCategories
-                        .find((cat) => cat.id === openCategory)
-                        .emojis.map(({ id, emoji, label, meaning }) => (
-                        <li key={id} style={{ margin: "1rem 0", display: "flex", alignItems: "center", gap: "1rem" }}>
-                            <span style={{ fontSize: "2rem" }}>{emoji}</span>
-                            <div>
-                            <strong>{label}</strong>
-                            <p style={{ margin: 0, fontSize: "0.9rem", color: "#555" }}>{meaning}</p>
-                            </div>
-                        </li>
-                        ))}
-                    </ul>
-                    <button onClick={() => setOpenCategory(null)} style={{ marginTop: "1rem" }}>
-                    Fechar
-                    </button>
-                </div>
-                </div>
-            )}
+                {/* Modal */}
+                {openCategory && (
+                    <div
+                        className="modal-backdrop"
+                        onClick={() => setOpenCategory(null)}
+                    >
+                        <div
+                            className="modal-content"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <h3 className="modal-title">
+                                {moodCategories.find((cat) => cat.id === openCategory).label}
+                            </h3>
+                            <ul className="modal-emoji-list">
+                                {moodCategories
+                                    .find((cat) => cat.id === openCategory)
+                                    .emojis.map(({ id, emoji, label, meaning }) => (
+                                        <li key={id} className="modal-emoji-item">
+                                            <span className="emoji-symbol">{emoji}</span>
+                                            <div>
+                                                <strong>{label}</strong>
+                                                <p className="emoji-meaning">{meaning}</p>
+                                            </div>
+                                        </li>
+                                    ))}
+                            </ul>
+                            <button onClick={() => setOpenCategory(null)} className="modal-close-button">
+                                Fechar
+                            </button>
+                        </div>
+                    </div>
+                )}
             </section>
         );
-    }
+    };
+
 
     
 
     return (
         <div className="mood-panel">
-            <section className='mood-panel-today'>
+            <section className='mood-panel-today-container'>
                 <h4>Olá, {getUserName()}, como te sentes hoje?</h4>
                 <MoodSelector />
             </section>
@@ -332,10 +372,9 @@ export default function MoodBoard() {
                     {/* Mood Counter */}
                     <div className='mood-counter'>
                         <h4>Mood counter</h4>
-                        <section id="chart" className='mood-counter-donut'>
-                            <ReactApexChart options={state.options} series={state.series} type="donut" width="100%" height={600} />
-                        </section>
-                        {/* <span className='mood-counter-donut-counter'>{moodCount}</span> */}
+                        <div id="chart" className='mood-counter-donut'>
+                            <ReactApexChart options={state.options} series={state.series} type="donut"/>
+                        </div>
                         <section className='mood-counter-emojis'>
                             {topEmojis.map((emojiData, index) => (
                                 <div key={index} className="emoji-stat">
