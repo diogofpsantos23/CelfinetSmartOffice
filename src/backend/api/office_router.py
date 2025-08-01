@@ -13,24 +13,23 @@ PT_TZ = ZoneInfo("Europe/Lisbon")
 def get_office_col() -> Collection:
     return db["office_days"]
 
-
 def monday_forward(d: date) -> date:
     wd = d.weekday()
     if wd == 6:
         return d + timedelta(days=1)
     return d - timedelta(days=wd)
 
-
 def business_week(start: date):
     return [start + timedelta(days=i) for i in range(5)]
-
 
 @router.get("/week")
 def get_week(start: date = Query(...), user=Depends(current_user), col: Collection = Depends(get_office_col)):
     base = monday_forward(date.today())
     start = monday_forward(start)
     max_allowed = base + timedelta(weeks=3)
-    if start < base or start >= max_allowed:
+    earliest_doc = col.find_one({}, sort=[("date", 1)])
+    earliest_allowed = monday_forward(date.fromisoformat(earliest_doc["date"])) if earliest_doc else None
+    if start >= max_allowed or (earliest_allowed and start < earliest_allowed):
         raise HTTPException(400, "Semana fora do intervalo permitido")
     days = []
     for d in business_week(start):
@@ -43,15 +42,14 @@ def get_week(start: date = Query(...), user=Depends(current_user), col: Collecti
                 "bookings": []
             }
             col.insert_one(doc)
-        mine = any(b["user_id"] == str(user["_id"]) for b in doc["bookings"])
+        mine = any(b["user_id"] == str(user["_id"]) for b in doc.get("bookings", []))
         days.append({
             "date": doc["date"],
-            "capacity": doc["capacity"],
-            "bookings": doc["bookings"],
+            "capacity": doc.get("capacity", 8),
+            "bookings": doc.get("bookings", []),
             "bookedByMe": mine
         })
     return {"days": days}
-
 
 class BookReq(BaseModel):
     date: date

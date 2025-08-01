@@ -1,20 +1,29 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+footer {
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
 .mood-page {
+    min-height: 100vh;
     display: flex;
-    width: 100vw;
-    height: 100vh;
     flex-direction: column;
 }
 
-.mood-container{
+.mood-container {
     flex: 1;
     display: flex;
     align-items: flex-start;
     justify-content: center;
+    background-color: #F9FAFC;
 }
 
 .mood-panel {
-    width: 100vw;
-    height: 90vh;
+    width: 80vw;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -72,8 +81,6 @@
 }
 
 .mood-counter-donut-counter {
-    font-size: 30px;
-    font-weight: 700;
     font-size: 1.5rem; 
     font-weight: bold;
     color: #333; 
@@ -114,6 +121,7 @@
     display: flex;
     gap: 1rem;
 }
+
 .mood-box {
     cursor: pointer;
     font-size: 2rem; 
